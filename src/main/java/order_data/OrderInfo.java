@@ -9,6 +9,12 @@ public class OrderInfo {
     public OrderInfo(){
     }
 
+    public OrderInfo(IngredientInfo ingredientInfo){
+        this.ingredients = new String[]{
+                ingredientInfo.get_id()
+        };
+    }
+
 
 
 
