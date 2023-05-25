@@ -17,6 +17,8 @@ import userData.UserSteps;
 
 import static order_data.IngredientApi.getIngredientFromArray;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class GetOrderTests {
@@ -54,6 +56,20 @@ public class GetOrderTests {
                 .body("orders", notNullValue())
                 .and()
                 .statusCode(SC_OK);
+    }
+
+    @Test
+    @Description("Проверка получения заказов без авторизации")
+    @DisplayName("Проверка ответа сервера при запросе заказов не авторизированным пользователем")
+    public void testGetOrdersWithoutAuth(){
+        OrderInfo orderInfo = new OrderInfo(ingredientInfo);
+        response = orderSteps.createOrderWithoutAuth(orderInfo);
+        response = orderSteps.getUserOrders("fdfdfd");
+        response
+                .then()
+                .body("message", equalTo("You should be authorised"))
+                .and()
+                .statusCode(SC_UNAUTHORIZED);
     }
 
 
