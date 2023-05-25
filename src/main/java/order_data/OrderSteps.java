@@ -33,4 +33,13 @@ public class OrderSteps {
                 .get(Api_constants.INGREDIENTS);
     }
 
+    @Step("Получение заказов пользователя")
+    public Response getUserOrders(String accessToken){
+        return given()
+                .header("Content-Type", "application/json")
+                .header("authorization", accessToken)
+                .baseUri(Api_constants.BASE_URL)
+                .get(Api_constants.ORDERS);
+    }
+
 }
