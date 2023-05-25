@@ -16,7 +16,7 @@ import userData.UserRandomized;
 import userData.UserSteps;
 
 import static order_data.IngredientApi.getIngredientFromArray;
-import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class CreateOrderTests {
@@ -54,4 +54,51 @@ public class CreateOrderTests {
                 .and()
                 .statusCode(SC_OK);
     }
+
+    @Test
+    @Description("Проверка создания заказа с не авторизованным пользователем")
+    @DisplayName("Проверка ответа сервера после создания заказа без авторизации")
+    public void testCreateOrderWithOutAuth(){
+        OrderInfo orderInfo = new OrderInfo(ingredientInfo);
+        response = orderSteps.createOrderWithAuth(orderInfo,"");
+        response
+                .then()
+                .body("success", equalTo(true))
+                .and()
+                .statusCode(SC_OK);
+    }
+
+    @Test
+    @Description("Проверка создания заказа без ингредиентов")
+    @DisplayName("Проверка ответа сервера при создании заказа без ингредиентов")
+    public void testCreateOrderWithoutIngredients(){
+        UserInfo userInfo = UserRandomized.userWithRandomData();
+        OrderInfo orderInfo = new OrderInfo();
+        response = userSteps.userCreate(userInfo);
+        accessToken = response.then().extract().body().path("accessToken");
+        response = orderSteps.createOrderWithoutAuth(orderInfo);
+        response
+                .then()
+                .body("success", equalTo(false))
+                .body("message", equalTo("Ingredient ids must be provided"))
+                .and()
+                .statusCode(SC_BAD_REQUEST);
+    }
+
+    @Test
+    @Description("Проверка создания заказа с неверным хэшем ингредиентов")
+    @DisplayName("Проверка ответа сервера при попытке создать заказ с неверным хэшем")
+    public void testCreateOrderWithBadHash(){
+        UserInfo userInfo = UserRandomized.userWithRandomData();
+        ingredientInfo.set_id("WeCanSetBadID");
+        OrderInfo orderInfo = new OrderInfo(ingredientInfo);
+        response = userSteps.userCreate(userInfo);
+        accessToken = response.then().extract().body().path("accessToken");
+        response = orderSteps.createOrderWithAuth(orderInfo, accessToken);
+        response
+                .then()
+                .statusCode(SC_INTERNAL_SERVER_ERROR);
+    }
+
+
 }
