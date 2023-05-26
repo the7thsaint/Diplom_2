@@ -17,14 +17,14 @@ public class UserSteps {
     }
 
     @Step("Регистрация нового пользователя")
-    public Response userCreate(UserInfo user) {
+    public static Response userCreate(UserInfo user) {
         return requestSpec()
                 .body(user)
                 .post(CREATE_USER);
     }
 
     @Step("Изменение профиля пользователя")
-    public Response userProfileEdit(String accessToken, UserInfo userInfo) {
+    public static  Response userProfileEdit(String accessToken, UserInfo userInfo) {
         return requestSpec()
                 .header("Authorization", accessToken)
                 .body(userInfo)
@@ -33,21 +33,21 @@ public class UserSteps {
 
 
     @Step("Авторизация пользователя по логину и токену")
-    public Response loginUserWithAuthToken(UserInfo user, String token) {
+    public static Response loginUserWithAuthToken(UserInfo user, String token) {
         return requestSpec()
                 .header("Authorization", token)
                 .body(user)
                 .post(LOGIN_USER);
     }
     @Step("Логин пользователя c логином и паролем")
-    public Response loginUser(UserInfo userInfo){
+    public static Response loginUser(UserInfo userInfo){
         return requestSpec()
                 .body(userInfo)
                 .post(LOGIN_USER);
     }
 
     @Step("Удаление пользователя")
-    public void userDelete(String token) {
+    public static void userDelete(String token) {
         requestSpec()
                 .header("Authorization", token)
                 .delete(USER_AUTH);

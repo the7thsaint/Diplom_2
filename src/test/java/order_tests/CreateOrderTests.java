@@ -14,17 +14,15 @@ import org.junit.Test;
 import userData.UserInfo;
 import userData.UserRandomized;
 import userData.UserSteps;
-
 import static order_data.IngredientApi.getIngredientFromArray;
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class CreateOrderTests {
-    private final UserSteps userSteps = new UserSteps();
+
     private String accessToken;
     private Response response;
     private IngredientInfo ingredientInfo;
-    private final OrderSteps orderSteps = new OrderSteps();
 
     @Before
     public void getData(){
@@ -35,7 +33,7 @@ public class CreateOrderTests {
     @After
     public void deleteUser(){
         if(accessToken!=null){
-            userSteps.userDelete(accessToken);
+            UserSteps.userDelete(accessToken);
         }
     }
 
@@ -45,9 +43,9 @@ public class CreateOrderTests {
     public void testCreateOrderWithAuth(){
         UserInfo userInfo = UserRandomized.userWithRandomData();
         OrderInfo orderInfo = new OrderInfo(ingredientInfo);
-        response = userSteps.userCreate(userInfo);
+        response = UserSteps.userCreate(userInfo);
         accessToken = response.then().extract().body().path("accessToken");
-        response = orderSteps.createOrderWithAuth(orderInfo,accessToken);
+        response = OrderSteps.createOrderWithAuth(orderInfo,accessToken);
         response
                 .then()
                 .body("success", equalTo(true))
@@ -60,7 +58,7 @@ public class CreateOrderTests {
     @DisplayName("Проверка ответа сервера после создания заказа без авторизации")
     public void testCreateOrderWithOutAuth(){
         OrderInfo orderInfo = new OrderInfo(ingredientInfo);
-        response = orderSteps.createOrderWithAuth(orderInfo,"");
+        response = OrderSteps.createOrderWithAuth(orderInfo,"");
         response
                 .then()
                 .body("success", equalTo(true))
@@ -74,9 +72,9 @@ public class CreateOrderTests {
     public void testCreateOrderWithoutIngredients(){
         UserInfo userInfo = UserRandomized.userWithRandomData();
         OrderInfo orderInfo = new OrderInfo();
-        response = userSteps.userCreate(userInfo);
+        response = UserSteps.userCreate(userInfo);
         accessToken = response.then().extract().body().path("accessToken");
-        response = orderSteps.createOrderWithoutAuth(orderInfo);
+        response = OrderSteps.createOrderWithoutAuth(orderInfo);
         response
                 .then()
                 .body("success", equalTo(false))
@@ -92,9 +90,9 @@ public class CreateOrderTests {
         UserInfo userInfo = UserRandomized.userWithRandomData();
         ingredientInfo.set_id("WeCanSetBadID");
         OrderInfo orderInfo = new OrderInfo(ingredientInfo);
-        response = userSteps.userCreate(userInfo);
+        response = UserSteps.userCreate(userInfo);
         accessToken = response.then().extract().body().path("accessToken");
-        response = orderSteps.createOrderWithAuth(orderInfo, accessToken);
+        response = OrderSteps.createOrderWithAuth(orderInfo, accessToken);
         response
                 .then()
                 .statusCode(SC_INTERNAL_SERVER_ERROR);

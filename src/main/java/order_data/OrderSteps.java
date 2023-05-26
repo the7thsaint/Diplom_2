@@ -7,7 +7,7 @@ import static io.restassured.RestAssured.given;
 
 public class OrderSteps {
     @Step("Создание заказа авторизированным пользователем")
-    public Response createOrderWithAuth(OrderInfo orderInfo, String accessToken){
+    public static Response createOrderWithAuth(OrderInfo orderInfo, String accessToken){
         return given()
                 .header("Content-Type", "application/json")
                 .header("authorization", accessToken)
@@ -17,7 +17,7 @@ public class OrderSteps {
     }
 
     @Step("Создание заказа не авторизированным пользователем")
-    public Response createOrderWithoutAuth(OrderInfo orderInfo){
+    public static Response createOrderWithoutAuth(OrderInfo orderInfo){
         return given()
                 .header("Content-Type", "application/json")
                 .baseUri(Api_constants.BASE_URL)
@@ -26,7 +26,7 @@ public class OrderSteps {
     }
 
     @Step("Получение ингредиентов")
-    public Response getIngredients(){
+    public static Response getIngredients(){
         return given()
                 .header("Content-Type", "application/json")
                 .baseUri(Api_constants.BASE_URL)
@@ -34,7 +34,7 @@ public class OrderSteps {
     }
 
     @Step("Получение заказов пользователя")
-    public Response getUserOrders(String accessToken){
+    public static Response getUserOrders(String accessToken){
         return given()
                 .header("Content-Type", "application/json")
                 .header("authorization", accessToken)

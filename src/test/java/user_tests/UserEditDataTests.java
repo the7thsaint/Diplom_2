@@ -10,7 +10,6 @@ import org.junit.Test;
 import userData.UserInfo;
 import userData.UserRandomized;
 import userData.UserSteps;
-
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 
@@ -18,21 +17,19 @@ public class UserEditDataTests {
     String accessToken;
     private Response response;
     private UserInfo userInfo;
-    private UserSteps userSteps = new UserSteps();
-    protected UserRandomized userRandomized = new UserRandomized();
     static Faker faker = new Faker();
 
     @Before
     public void createTestUser(){
-        userInfo = userRandomized.userWithRandomData();
-        response = userSteps.userCreate(userInfo);
+        userInfo = UserRandomized.userWithRandomData();
+        response = UserSteps.userCreate(userInfo);
         accessToken = response.then().extract().body().path("accessToken");
     }
 
     @After
     public void deleteTestUser(){
         if(accessToken!=null){
-            userSteps.userDelete(accessToken);}
+            UserSteps.userDelete(accessToken);}
     }
 
     @Test
@@ -42,7 +39,7 @@ public class UserEditDataTests {
         userInfo.setName(faker.name().firstName());
         userInfo.setPassword(faker.internet().password());
         userInfo.setEmail(faker.internet().emailAddress());
-        response = userSteps.userProfileEdit(accessToken, userInfo);
+        response = UserSteps.userProfileEdit(accessToken, userInfo);
         response
                 .then()
                 .statusCode(SC_OK);
@@ -55,7 +52,7 @@ public class UserEditDataTests {
         userInfo.setName(faker.name().firstName());
         userInfo.setPassword(faker.internet().password());
         userInfo.setEmail(faker.internet().emailAddress());
-        response = userSteps.userProfileEdit("", userInfo);
+        response = UserSteps.userProfileEdit("", userInfo);
         response
                 .then()
                 .statusCode(SC_UNAUTHORIZED);

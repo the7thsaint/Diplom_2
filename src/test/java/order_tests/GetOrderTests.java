@@ -14,7 +14,6 @@ import org.junit.Test;
 import userData.UserInfo;
 import userData.UserRandomized;
 import userData.UserSteps;
-
 import static order_data.IngredientApi.getIngredientFromArray;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -22,8 +21,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class GetOrderTests {
-    private final UserSteps userSteps = new UserSteps();
-    private final OrderSteps orderSteps = new OrderSteps();
+
     private String accessToken;
     private Response response;
     private IngredientInfo ingredientInfo;
@@ -37,7 +35,7 @@ public class GetOrderTests {
     @After
     public void deleteUser(){
         if(accessToken!=null){
-            userSteps.userDelete(accessToken);
+            UserSteps.userDelete(accessToken);
         }
     }
 
@@ -47,10 +45,10 @@ public class GetOrderTests {
     public void testGetOrdersWithAuth(){
         OrderInfo orderInfo = new OrderInfo(ingredientInfo);
         UserInfo userInfo = UserRandomized.userWithRandomData();
-        response = userSteps.userCreate(userInfo);
+        response = UserSteps.userCreate(userInfo);
         accessToken = response.then().extract().body().path("accessToken");
-        response = orderSteps.createOrderWithAuth(orderInfo, accessToken);
-        response = orderSteps.getUserOrders(accessToken);
+        response = OrderSteps.createOrderWithAuth(orderInfo, accessToken);
+        response = OrderSteps.getUserOrders(accessToken);
         response
                 .then()
                 .body("orders", notNullValue())
@@ -63,15 +61,12 @@ public class GetOrderTests {
     @DisplayName("Проверка ответа сервера при запросе заказов не авторизированным пользователем")
     public void testGetOrdersWithoutAuth(){
         OrderInfo orderInfo = new OrderInfo(ingredientInfo);
-        response = orderSteps.createOrderWithoutAuth(orderInfo);
-        response = orderSteps.getUserOrders("fdfdfd");
+        response = OrderSteps.createOrderWithoutAuth(orderInfo);
+        response = OrderSteps.getUserOrders("fdfdfd");
         response
                 .then()
                 .body("message", equalTo("You should be authorised"))
                 .and()
                 .statusCode(SC_UNAUTHORIZED);
     }
-
-
-
 }
